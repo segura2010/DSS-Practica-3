@@ -5,20 +5,26 @@ import java.util.Map;
 
 public enum ProveedorEntradas {
 	
-	instance;
+	INSTANCE; // Para el singleton
 
 	private Map<String, Entrada> contentProvider = new HashMap<String, Entrada>();
 
 	private ProveedorEntradas()
 	{
-		Entrada e = new Entrada("Primera Entrada", "Esta es mi primera entrada del blog");
-		contentProvider.put("1", e);
+		Entrada ent = new Entrada();
+		ent.setId("1");
+		ent.setTitulo("Hola");
+		ent.setContenido("Mundo");
+		contentProvider.put("1", ent);
 		
-		e = new Entrada("Segunda Entrada", "Esta es mi segunda entrada");
-		contentProvider.put("2", e);
+		ent = new Entrada();
+		ent.setId("2");
+		ent.setTitulo("Hola2");
+		ent.setContenido("Mundo2");
+		contentProvider.put("2", ent);
 	}
 	
-	public Map<String, Entrada> getModel()
+	public Map<String, Entrada> getModelo()
 	{
 		return contentProvider;
 	}
