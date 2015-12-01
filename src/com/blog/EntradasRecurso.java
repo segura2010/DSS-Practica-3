@@ -13,8 +13,16 @@ public class EntradasRecurso {
 
 	
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML })
 	public Entradas getXML()
+	{
+		Entradas es = new Entradas();
+		return es;
+	}
+	
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Entradas getJSON()
 	{
 		Entradas es = new Entradas();
 		return es;
