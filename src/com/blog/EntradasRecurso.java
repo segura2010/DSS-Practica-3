@@ -13,20 +13,13 @@ public class EntradasRecurso {
 
 	
 	@GET
-	@Produces({ MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_XML , MediaType.APPLICATION_JSON })
 	public Entradas getXML()
 	{
 		Entradas es = new Entradas();
 		return es;
 	}
 	
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Entradas getJSON()
-	{
-		Entradas es = new Entradas();
-		return es;
-	}
 	
 	//Lo que sigue se puede utilizar para comprobar la integracion con el navegador que utilicemos
 	@GET

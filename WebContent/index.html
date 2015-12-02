@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Blog - Luis Alberto Segura Delgado</title>
 
 <!--Import Google Icon Font-->
 <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -16,13 +16,15 @@
 </head>
 <body>
 
-<h4>Bienvenido al blog!</h4>
+<h4>Blog - Luis Alberto Segura Delgado</h4>
 
-<div id="menu" style="position:fixed;right:12px;">
+<div id="menu" style="position:fixed;right:12px;bottom:20px">
 	<a onclick="mostrarFormulario()" class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="left" data-delay="50" data-tooltip="Nueva entrada"><i class="mdi-content-add"></i></a>
 </div>
 
-<h5><i>Entradas:</i></h5>
+<br>
+<br>
+
 <div id="contenido"></div>
 
 
@@ -56,6 +58,8 @@
 
 <script type="text/javascript">
 
+var entradasCache = {};
+
 function cargarEntradas()
 {
 	$.get("rest/entradas").done(function(xml){
@@ -71,8 +75,10 @@ function cargarEntradas()
 		for(var e=0;e<titulos.length;e++)
 		{
 			//console.log(e);
-			$("#contenido").append( "<h3>" + $(ids[e]).text() + ". " + $(titulos[e]).text() + "</h3>" );
+			$("#contenido").append( "<h3>" + $(ids[e]).text() + ". " + $(titulos[e]).text() + " <a href='#!' onclick='editarEntrada(\""+ $(ids[e]).text() +"\")'<i class='material-icons' style='color:blue'>mode_edit</i></a> <a href='#!' onclick='borrarEntrada(\""+ $(ids[e]).text() +"\")'<i class='material-icons' style='color:red'>delete</i></a>  </h3>" );
 			$("#contenido").append( $(contenidos[e]).text() + "<br>" );
+			
+			entradasCache[$(ids[e]).text()] = {id: $(ids[e]).text(), titulo:$(titulos[e]).text(), contenido:$(contenidos[e]).text()};
 		}
 		
 	}).fail(function(err){
@@ -89,8 +95,8 @@ function mostrarFormulario()
 function publicar()
 {	
 	var id = $("#idTxt").val();
-	var titulo = $("#tituloTxt").val();
-	var contenido = $("#contenidoTxt").val();
+	var titulo = limpiarHTML($("#tituloTxt").val());
+	var contenido = limpiarHTML($("#contenidoTxt").val());
 	
 	var xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><entrada><titulo>'+ titulo +'</titulo><contenido>'+ contenido +'</contenido><id>'+ id +'</id></entrada>';
 	
@@ -100,7 +106,38 @@ function publicar()
         contentType: 'application/xml',
         processData: false,
         data: xml,
-   }).done(function(){ alert("Publicada!"); cargarEntradas(); }).fail(function(){ alert("Error!") });
+   }).done(function(){ toastAlert("Publicada!"); cargarEntradas(); }).fail(function(){ alert("Error!") });
+}
+
+function borrarEntrada(id)
+{	
+	
+	var seguro = confirm("Seguro de borrar esta entrada?");
+	
+	if(seguro)
+	{
+		$.ajax({
+	        url: "rest/entrada/?entrada=" + id,
+	        type: "DELETE",
+	        processData: false,
+	   }).done(function(){ toastAlert("Eliminada!"); cargarEntradas(); }).fail(function(){ alert("Error!") });
+	}
+}
+
+function editarEntrada(id)
+{	
+	$("#idTxt").val(entradasCache[id].id);
+	$("#tituloTxt").val( limpiarHTML(entradasCache[id].titulo) );
+	$("#contenidoTxt").val( limpiarHTML(entradasCache[id].contenido) );
+	$("#nuevaEntradaModal").find("label").prop("class", "active");
+	mostrarFormulario();
+}
+
+function limpiarHTML(txt)
+{
+	txt = txt.replace(/\</gi, "&#60;");
+	txt = txt.replace(/\>/gi, "&#62;");
+	return txt;
 }
 
 function materializeInit()
@@ -113,6 +150,11 @@ function materializeInit()
     $(document).ready(function(){
         $('.tooltipped').tooltip({delay: 50});
     });
+}
+
+function toastAlert(msg)
+{
+	Materialize.toast(msg, 4000);
 }
 
 materializeInit();

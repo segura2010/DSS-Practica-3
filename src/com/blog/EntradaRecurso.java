@@ -80,9 +80,7 @@ public class EntradaRecurso {
 	@Consumes(MediaType.APPLICATION_XML)
 	public Entrada putEntrada(JAXBElement<Entrada> e)
 	{
-		System.out.println("PUT RECIBIDO!");
 		Entrada entrada = e.getValue();
-		System.out.println(entrada.getTitulo());
 		ProveedorEntradas.INSTANCE.getModelo().put(entrada.getId(), entrada);
 		return entrada;
 	}
