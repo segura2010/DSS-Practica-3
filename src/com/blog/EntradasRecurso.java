@@ -12,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 public class EntradasRecurso {
 
 	
+	// Esta clase devuelve la lista entera de entradas
+	
 	@GET
 	@Produces({ MediaType.APPLICATION_XML , MediaType.APPLICATION_JSON })
 	public Entradas getXML()

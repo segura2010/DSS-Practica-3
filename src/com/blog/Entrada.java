@@ -12,7 +12,7 @@ public class Entrada {
 	private String contenido;
 	
 	// Se permite añadir una imagen de presentacion
-	//private imagen;
+	private String imagen;
 	
 	public Entrada() {
 		// TODO Auto-generated constructor stub
@@ -41,6 +41,13 @@ public class Entrada {
 	//@XmlAttribute
 	public void setContenido(String contenido) {
 		this.contenido = contenido;
+	}
+	
+	public String getImagen() {
+		return imagen;
+	}
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
 	}
 	
 }

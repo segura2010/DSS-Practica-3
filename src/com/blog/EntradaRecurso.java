@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
@@ -28,10 +30,12 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 
 @Path("/entrada")
@@ -55,7 +59,7 @@ public class EntradaRecurso {
 	*/
 	
 
-	// Este metodo se llamara si existe una peticion XML desde el cliente
+	// Obtener una entrada en XML y JSON
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Entrada getXML(@QueryParam("entrada") String entrada)
@@ -71,7 +75,7 @@ public class EntradaRecurso {
 		}
 	}
 	
-	//Lo que sigue se puede utilizar para comprobar la integracion con el navegador que utilicemos
+	// Obtener una entrada en plano
 	@GET
 	@Produces({ MediaType.TEXT_XML })
 	public Entrada getHTML(@QueryParam("entrada") String entrada)
@@ -87,7 +91,7 @@ public class EntradaRecurso {
 		}
 	}
 	
-	
+	// Crear nueva entrada (por PUT y sin foto subida, no se usa)
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	public Entrada putEntrada(JAXBElement<Entrada> e)
@@ -97,6 +101,7 @@ public class EntradaRecurso {
 		return entrada;
 	}
 	
+	// Borrado de entradas
 	@DELETE
 	public Entrada deleteEntrada(@QueryParam("entrada") String entrada)
 	{
@@ -117,24 +122,60 @@ public class EntradaRecurso {
 	@POST
 	@Path("/nueva")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadFile(@FormDataParam("archivo") InputStream uploadedInputStream, @FormDataParam("archivo") FormDataBodyPart fileDetail)//, @FormParam("id") String id, @FormParam("titulo") String titulo, @FormParam("contenido") String contenido)
+	public Response uploadFile(@FormDataParam("archivo") InputStream uploadedInputStream, @FormDataParam("archivo") FormDataContentDisposition fileDetail, @FormDataParam("id") String id, @FormDataParam("titulo") String titulo, @FormDataParam("contenido") String contenido) throws IOException
 	{
-		System.out.println("LLEGA");
-		//System.out.println(titulo);
-		
-		String uploadedFileLocation = "./" + fileDetail.getName();
+		String uploadedFileLocation = fileDetail.getFileName();
 
-		// save it
+		// guardar..
 		writeToFile(uploadedInputStream, uploadedFileLocation);
 
-		String output = "File uploaded to : " + uploadedFileLocation;
+		String current = new java.io.File( "." ).getCanonicalPath(); // obtenemos el path actual
+		String localizacion = current + "/" + uploadedFileLocation; // preparamos la localizacion del fichero para guardarla y despues saber donde esta
+		String output = "Archivo subido a: " + localizacion + "<br> Volviendo a la página de inicio..";
+		String redirect = "<script> setTimeout(function(){ document.location.href='http://localhost:8080/Practica3_LuisAlbertoSeguraDelgado/'; }, 2000); </script>";
 
-		return Response.status(200).entity(output).build();
+		Entrada entrada = new Entrada();
+		entrada.setContenido(contenido);
+		entrada.setId(id);
+		entrada.setTitulo(titulo);
+		entrada.setImagen(localizacion);
+		ProveedorEntradas.INSTANCE.getModelo().put(id, entrada);
+		
+		return Response.status(200).entity(output + redirect).build();
 
 	}
 	
+	// Devuelve la foto de una entrada
+	@GET
+	@Path("/imagen")
+	@Produces({ MediaType.TEXT_XML })
+	public Response getImagen(@QueryParam("entrada") String entrada) throws URISyntaxException
+	{
+		if(ProveedorEntradas.INSTANCE.getModelo().containsKey(entrada))
+		{
+			Entrada ent = ProveedorEntradas.INSTANCE.getModelo().get(entrada);
+			if(ent.getImagen() != null)
+			{
+				if(ent.getImagen().startsWith("http"))
+				{
+					return Response.seeOther( new URI(ent.getImagen()) ).build();
+				}
+				else
+				{
+					File imagenF = new File(ent.getImagen());
+					return Response.ok(imagenF, "application/zip").build();
+				}
+			}
+			return null;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
 
-	// save uploaded file to new location
+	// Guarda la foto en local
 	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
 
 		try {
@@ -155,23 +196,5 @@ public class EntradaRecurso {
 		}
 
 	}
-	
-	
-	
-	private Response putAndGetResponse(Entrada e)
-	{
-	    Response res;
-	    if(ProveedorEntradas.INSTANCE.getModelo().containsKey(e.getId()))
-	    {
-	      res = Response.noContent().build();
-	    }
-	    else
-	    {
-	      res = Response.created(uriInfo.getAbsolutePath()).build();
-	    }
-	    ProveedorEntradas.INSTANCE.getModelo().put(e.getId(), e);
-	    return res;
-	}
-	
 	
 }

@@ -5,16 +5,20 @@ import java.util.Map;
 
 public enum ProveedorEntradas {
 	
+	// Mantenemos la lista de entradas en un Singleton..
+	
 	INSTANCE; // Para el singleton
 
 	private Map<String, Entrada> contentProvider = new HashMap<String, Entrada>();
 
 	private ProveedorEntradas()
 	{
+		// Entrada predefinida
 		Entrada ent = new Entrada();
 		ent.setId("1");
 		ent.setTitulo("Bienvenido!");
 		ent.setContenido("Este blog esta basado en la Restful API de Jersey para Java. <br> Práctica realizada por <b>Luis Alberto Segura Delgado</b> para la asignatura DSS del Master de Ingeniría Informática");
+		ent.setImagen("http://masteres.ugr.es/ugrme/pages/logougr/!");
 		contentProvider.put("1", ent);
 		
 		/*

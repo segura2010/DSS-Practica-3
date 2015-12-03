@@ -34,35 +34,34 @@
 	<div class="modal-content row">
 		<h3>Crear Nueva entrada</h3>
 		
-		<div class="input-field col s9">
-	      	<input value="" id="idTxt" type="text" class="validate" required>
-	      	<label class="active" for="idTxt">ID</label>
-      	</div>
-      	
-      	<div class="input-field col s9">
-	      	<input value="" id="tituloTxt" type="text" class="validate" required>
-	      	<label class="active" for="tituloTxt">Titulo</label>
-      	</div>
-      	
-      	<div class="input-field col s9">
-			<i class="material-icons prefix">mode_edit</i>
-			<textarea id="contenidoTxt" class="materialize-textarea" length="300" maxlength="300"></textarea>
-           	<label for="contenidoTxt">Contenido</label>
-		</div>
+		<form id="nuevaEntradaForm" action="rest/entrada/nueva" method="POST" enctype="multipart/form-data">
+			<div class="input-field col s9">
+		      	<input value="" id="idTxt" name="id" type="text" class="validate" required>
+		      	<label class="active" for="idTxt">ID</label>
+	      	</div>
+	      	
+	      	<div class="input-field col s9">
+		      	<input value="" id="tituloTxt" name="titulo" type="text" class="validate" required>
+		      	<label class="active" for="tituloTxt">Titulo</label>
+	      	</div>
+	      	
+	      	<div class="input-field col s9">
+				<i class="material-icons prefix">mode_edit</i>
+				<textarea id="contenidoTxt" name="contenido" class="materialize-textarea" length="300" maxlength="300"></textarea>
+	           	<label for="contenidoTxt">Contenido</label>
+			</div>
+			
+			<div class="input-field col s9">
+				<input id="archivo" name="archivo" type="file"/>
+	           	<label for="archivo">Foto</label>
+			</div>
+		</form>
 	</div>
 	<div class="modal-footer">
 		<a href="#!" class="modal-action modal-close waves-effect waves-white btn-flat" onclick="publicar()">Publicar</a>
 	</div>
 </div>
 
-
-<form action="rest/entrada/nueva" method="POST" enctype="multipart/form-data">
-<input name="archivo" type="file"/>
-<input name="id"/>
-<input name="titulo"/>
-<input name="contenido"/>
-<input type="submit"/>
-</form>
 
 <script type="text/javascript">
 
@@ -79,11 +78,19 @@ function cargarEntradas()
 		var contenidos = $xml.find("contenido");
 		var titulos = $xml.find("titulo");
 		var ids = $xml.find("id");
+		var imagenes = $xml.find("imagen");
 		
 		for(var e=0;e<titulos.length;e++)
 		{
 			//console.log(e);
+			// ponemos el titulo
 			$("#contenido").append( "<h3>" + $(ids[e]).text() + ". " + $(titulos[e]).text() + " <a href='#!' onclick='editarEntrada(\""+ $(ids[e]).text() +"\")'<i class='material-icons' style='color:blue'>mode_edit</i></a> <a href='#!' onclick='borrarEntrada(\""+ $(ids[e]).text() +"\")'<i class='material-icons' style='color:red'>delete</i></a>  </h3>" );
+			// ponemos la imagen
+			if($(imagenes[e]).text())
+			{
+				$("#contenido").append( "<img src='rest/entrada/imagen/?entrada="+ $(ids[e]).text() +"'> <br>" );
+			}
+			// ponemos el contenido
 			$("#contenido").append( $(contenidos[e]).text() + "<br>" );
 			
 			entradasCache[$(ids[e]).text()] = {id: $(ids[e]).text(), titulo:$(titulos[e]).text(), contenido:$(contenidos[e]).text()};
@@ -102,6 +109,9 @@ function mostrarFormulario()
 
 function publicar()
 {	
+	$("#nuevaEntradaForm").submit();
+	
+	/*
 	var id = $("#idTxt").val();
 	var titulo = limpiarHTML($("#tituloTxt").val());
 	var contenido = limpiarHTML($("#contenidoTxt").val());
@@ -115,6 +125,7 @@ function publicar()
         processData: false,
         data: xml,
    }).done(function(){ toastAlert("Publicada!"); cargarEntradas(); }).fail(function(){ alert("Error!") });
+	*/
 }
 
 function borrarEntrada(id)
