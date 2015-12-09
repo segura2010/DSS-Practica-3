@@ -48,16 +48,6 @@ public class EntradaRecurso {
 	Request peticion;
 	//String id;
 	
-	
-	/*
-	public EntradaRecurso(UriInfo uriInfo, Request peticion, String id)
-	{
-	    this.uriInfo = uriInfo;
-	    this.peticion = peticion;
-	    this.id = id;
-	}
-	*/
-	
 
 	// Obtener una entrada en XML y JSON
 	@GET
