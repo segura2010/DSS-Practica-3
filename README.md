@@ -2,6 +2,8 @@
 
 **Luis Alberto Segura Delgado**
 
+![](https://img.shields.io/badge/license-GPLv2-blue.svg)
+
 En este práctica se pedía crear un servicio RESTful para gestionar contenidos (incluyendo contenido multimedia), basado en Jersey, librería para Java que nos facilitará el trabajo.
 
 Se ha desarrollado un servicio web para gestionar las entradas de un blog. Como se puede ver en el código, se hace uso de los diferentes métodos HTTP para listar, crear o eliminar los contenidos.
@@ -18,3 +20,8 @@ Para probar la aplicación, solamente debemos acceder a dirección raíz y verem
 Una vez importado el proyecto a Eclipse e iniciado el servidor Tomcat, solamente habrá que navegar a la dirección: http://localhost:8080/Practica3_LuisAlbertoSeguraDelgado/ para visualizar la aplicación web. El servicio RESTful se encuentra en http://localhost:8080/Practica3_LuisAlbertoSeguraDelgado/rest/
 
 Si el servicio web no se encuentra en esta dirección, quizás se encuentre en: http://localhost:8080/com.blog (siguiendo la estructura de paquetes). Si no se encuentra en ninguna de esas direcciones, quizás se encuentre en alguna dirección conbinación de las anteriores: http://localhost:8080/Practica3_LuisAlbertoSeguraDelgado/com.blog ó http://localhost:8080/com.blog/Practica3_LuisAlbertoSeguraDelgado/. Si no esta en ninguna de esas, no se donde estará, porque esto pone las cosas donde quiere..
+
+
+# Licencia
+
+Este software esta publicado bajo la licencia GNU GENERAL PUBLIC LICENSE Version 2.
